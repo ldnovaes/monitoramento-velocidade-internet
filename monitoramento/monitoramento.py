@@ -5,6 +5,8 @@ import time
 import pandas as pd
 import speedtest
 
+from functions.functions import get_path_documents
+
 
 def criar_teste():
     s = speedtest.Speedtest()
@@ -31,7 +33,7 @@ def criar_teste():
 
     df_concatenado = pd.concat([df_planilha, df_resultados])
 
-    df_concatenado.to_excel('dados.xlsx', sheet_name='base', index=False)
+    df_concatenado.to_excel(os.path.join(get_path_documents(), 'dados.xlsx'), sheet_name='base', index=False)
 
 def executar_indefinidamente():
 
@@ -47,7 +49,8 @@ def executar_indefinidamente():
         print("Não é iniciado")
 
 def configuracoes():
-    with open(os.path.join(os.getcwd(), "../config.json"), "r") as config:
+
+    with open(os.path.join(get_path_documents(), "config.json"), "r") as config:
         return json.load(config)
 
 if __name__ == "__main__":

@@ -6,7 +6,7 @@ import tkinter
 import customtkinter
 from PIL import Image
 
-from functions.functions import add_to_startup_windows
+from functions.functions import add_to_startup_windows, get_path_documents
 
 
 class TelaInicial(customtkinter.CTk):
@@ -132,7 +132,7 @@ class TelaInicial(customtkinter.CTk):
     def start(self):
 
         if "windows" in platform.system().lower():
-            add_to_startup_windows()
+            add_to_startup_windows(os.path.join(os.getcwd(), "monitoramento", "monitoramento.py"))
 
         elif "linux" in platform.system().lower():
             pass
@@ -159,8 +159,19 @@ class TelaInicial(customtkinter.CTk):
         return self.time_monitoramento.get()
 
     def get_config_user(self):
-        with open(os.path.join(os.getcwd(), "config.json"), "r") as config:
-            return json.load(config)
+
+        config_path = os.path.join(get_path_documents(), "config.json")
+
+        # Se o arquivo não existir, cria-o com um dicionário vazio
+        if not os.path.exists(config_path):
+            with open(config_path, "w") as config_file:
+                json.dump({}, config_file)
+
+        with open(config_path, "r") as config_file:
+            try:
+                return json.load(config_file)
+            except json.decoder.JSONDecodeError:
+                return {}
 
     def set_config_user(self, **kwargs):
         dicionario = self.get_config_user()
@@ -176,7 +187,10 @@ class TelaInicial(customtkinter.CTk):
         self.save_config_user(dicionario)
 
     def save_config_user(self, dicionario):
-        with open(os.path.join(os.getcwd(), "config.json"), "w") as config:
+
+        config_path = os.path.join(get_path_documents(), "config.json")
+
+        with open(config_path, "w") as config:
             json.dump(dicionario, config)
 
 
