@@ -30,3 +30,11 @@ def get_path_documents():
     if config_dir is None:
         raise Exception("Nenhum diretório de configuração encontrado.")
 
+def byte_to_mb(nbytes):
+    suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+    i = 0
+    while nbytes >= 1024 and i < len(suffixes)-1:
+        nbytes /= 1024.
+        i += 1
+    f = ('%.2f' % nbytes).rstrip('0').rstrip('.')
+    return '%s %s' % (f, suffixes[i])

@@ -7,6 +7,7 @@ import customtkinter
 from PIL import Image
 
 from functions.functions import add_to_startup_windows, get_path_documents
+from monitoramento.monitoramento import executar_indefinidamente
 
 
 class TelaInicial(customtkinter.CTk):
@@ -135,7 +136,7 @@ class TelaInicial(customtkinter.CTk):
             add_to_startup_windows(os.path.join(os.getcwd(), "monitoramento", "monitoramento.py"))
 
         elif "linux" in platform.system().lower():
-            pass
+            monitoramento = executar_indefinidamente()
 
     def update_config_user(self):
 

@@ -1,6 +1,8 @@
 import json
 import os
 import time
+from _decimal import Decimal
+from datetime import datetime
 
 import pandas as pd
 import speedtest
@@ -18,14 +20,22 @@ def criar_teste():
 
     resultados = s.results.dict()
 
-    df_planilha = pd.read_excel('dados.xlsx', engine='openpyxl')
+    path_excel = os.path.join(get_path_documents(), 'dados.xlsx')
+
+    try:
+        df_planilha = pd.read_excel(path_excel, engine='openpyxl')
+
+    except FileNotFoundError:
+        df = pd.DataFrame()
+        df.to_excel(path_excel, index=False)
+        df_planilha = pd.read_excel(path_excel, engine='openpyxl')
 
     df_resultados = {
-        "velocidade_download": [resultados["download"]],
-        "velocidade_upload": [resultados["upload"]],
+        "velocidade_download": [resultados['download']],
+        "velocidade_upload": [resultados['upload']],
         "ping": [resultados["ping"]],
         "url_teste": [resultados["server"]["url"]],
-        "hora_teste": [resultados["timestamp"]],
+        "hora_teste": [str(datetime.strptime(resultados["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ").strftime("%d/%m/%Y %H:%M:%S.%f")[:-3])],
         "print_teste": [resultados["share"]]
     }
 
@@ -33,25 +43,35 @@ def criar_teste():
 
     df_concatenado = pd.concat([df_planilha, df_resultados])
 
-    df_concatenado.to_excel(os.path.join(get_path_documents(), 'dados.xlsx'), sheet_name='base', index=False)
+    df_concatenado.to_excel(path_excel, sheet_name='base', index=False)
 
 def executar_indefinidamente():
 
     config = configuracoes()
 
-    if config["inicio_automatico"]:
+    if config["inicio_automatico"] == True:
         print("Iniciando")
         while True:
             criar_teste()
-            time.sleep(int(config["tempo_monitoramento"].split(" ")[0].strip()))
+            time.sleep(int(config["tempo_monitoramento"].split(" ")[0].strip()) * 60)
 
     else:
         print("Não é iniciado")
 
 def configuracoes():
 
-    with open(os.path.join(get_path_documents(), "config.json"), "r") as config:
-        return json.load(config)
+    try:
+        with open(os.path.join(get_path_documents(), 'config.json'), "r") as config:
+            return json.load(config)
+
+    except FileNotFoundError:
+        with open(os.path.join(get_path_documents(), 'config.json'), "w") as config:
+
+            default = {"inicio_automatico": True, "tempo_monitoramento": "30 minutos"}
+
+            json.dump(default, config)
+
+            return default
 
 if __name__ == "__main__":
     executar_indefinidamente()
