@@ -5,7 +5,10 @@ from _decimal import Decimal
 from datetime import datetime
 
 import pandas as pd
+import threading
 import speedtest
+from art import *
+import textwrap
 
 from functions.functions import get_path_documents
 
@@ -49,14 +52,27 @@ def executar_indefinidamente():
 
     config = configuracoes()
 
-    if config["inicio_automatico"] == True:
-        print("Iniciando")
-        while True:
-            criar_teste()
-            time.sleep(int(config["tempo_monitoramento"].split(" ")[0].strip()) * 60)
+    texto = "VELOCINET"
+    ascii_art = text2art(texto, "graffiti")
+    print(ascii_art)
+    print("NÃO FECHE ESTA JANELA! O MONITORAMENTO ESTÁ OCORRENDO E ELA É A INDICAÇÃO DE QUE TUDO ESTÁ OCORRENDO BEM")
+    informacoes = textwrap.wrap("Se não quiser mais que o monitoramento seja iniciado automaticamente junto com o seu sistema, basta abrir o painel de monitoramento, desmarcar a opção 'Inicio Automático' e salvar as configurações. Na próxima inicialização do seu computador o programa deixará de ser aberto", 80)
+    print("\n\n")
+    for i in informacoes:
+        print(i)
+    print("\n\n")
+    print("Desenvolvido e publicado por @dmw.tech")
+    print("Nosso instagram em: https://instagram.com/dmw.tech")
 
-    else:
-        print("Não é iniciado")
+
+    tempo = int(config["tempo_monitoramento"].split(" ")[0].strip()) * 60
+    thread = threading.Thread(target=loop_teste, args=(tempo,))
+    thread.start()
+
+def loop_teste(tempo):
+    while True:
+        criar_teste()
+        time.sleep(tempo)
 
 def configuracoes():
 
@@ -67,7 +83,7 @@ def configuracoes():
     except FileNotFoundError:
         with open(os.path.join(get_path_documents(), 'config.json'), "w") as config:
 
-            default = {"inicio_automatico": True, "tempo_monitoramento": "30 minutos"}
+            default = {"inicio_automatico": False, "tempo_monitoramento": "30 minutos"}
 
             json.dump(default, config)
 

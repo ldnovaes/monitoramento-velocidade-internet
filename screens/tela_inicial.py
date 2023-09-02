@@ -8,6 +8,7 @@ from PIL import Image
 
 from functions.functions import add_to_startup_windows, get_path_documents
 from monitoramento.monitoramento import executar_indefinidamente
+from screens.rodape import Rodape
 
 
 class TelaInicial(customtkinter.CTk):
@@ -56,9 +57,9 @@ class TelaInicial(customtkinter.CTk):
         self.opcoes = ["30 minutos", "60 minutos", "90 minutos", "120 minutos"]
         self.time_monitoramento = customtkinter.StringVar()
         self.time_monitoramento.set(self.opcoes[0])
+
         self.type_url_entry = customtkinter.CTkOptionMenu(self, values=self.opcoes, variable=self.time_monitoramento,
                                                           font=customtkinter.CTkFont(size=24), width=450, height=75, fg_color="gray92", button_color="gray78", text_color="gray45", bg_color="white")
-
         self.type_url_entry.place(x=145, y=200)
         self.type_url_entry.configure(width=300)
 
@@ -94,49 +95,31 @@ class TelaInicial(customtkinter.CTk):
 
         self.bota_salvar.place(x=237.5, y=400)
 
-        self.line = customtkinter.CTkFrame(self.left_side_panel, fg_color='gray93', height=2, width=450)
-        self.line.place(x=75, y=585)
+        self.rodape = self.rodape_frame()
+        self.update_formulario()
 
-        self.label_iniciar = customtkinter.CTkLabel(self.left_side_panel, text="Velocinet", font=customtkinter.CTkFont(
-            family=(os.path.join(os.getcwd(), "fonts", "Poppins-ExtraBold.ttf")), weight="bold", size=15), width=200)
-        self.label_iniciar.place(x=200, y=570)
+    def rodape_frame(self):
+        self.rodape = Rodape(self)
 
-        self.descricao = customtkinter.CTkLabel(self.left_side_panel,
-                                                        text="Clique em Início para começar a monitorar seu provedor!",
-                                                        font=customtkinter.CTkFont(
-                                                            family=(os.path.join(os.getcwd(), "fonts",
-                                                                                 "Poppins-Light.ttf")),
-                                                            size=15),
-                                                        width=600,
-                                                        text_color="#555555")
+    def get_left_panel(self):
+        return self.left_side_panel
 
-        self.descricao.place(y=620)
+    def update_formulario(self):
 
-        self.botao_inicio = customtkinter.CTkButton(self, bg_color="white",
-                                                   text="Iniciar",
-                                                   height=50,
-                                                   fg_color="green",
-                                                   text_color="gray92",
-                                                   corner_radius=15,
-                                                   command=self.start,
-                                                   hover_color="forest green",
-                                                   width=125,
-                                                   font=customtkinter.CTkFont(
-                                                       family=(os.path.join(os.getcwd(), "fonts",
-                                                                            "Poppins-Regular.ttf")),
-                                                       size=16,
-                                                       weight="normal")
-                                                   )
+        config = self.get_config_user()
 
-        self.botao_inicio.place(x=237.5, y=680)
+        if config == {}:
+            print("ue")
+            return
 
-    def start(self):
+        if config["inicio_automatico"] == True:
+            self.visibilidade.select()
 
-        if "windows" in platform.system().lower():
-            add_to_startup_windows(os.path.join(os.getcwd(), "monitoramento", "monitoramento.py"))
+        else:
+            self.visibilidade.deselect()
 
-        elif "linux" in platform.system().lower():
-            monitoramento = executar_indefinidamente()
+        self.time_monitoramento.set(config["tempo_monitoramento"])
+
 
     def update_config_user(self):
 
