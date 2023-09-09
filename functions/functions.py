@@ -16,19 +16,27 @@ def remove_to_startup_windows():
     os.remove(bat_path)
 
 def get_path_documents():
-    dir_possiveis = ["Documentos", "Documents"]
+    dir_possiveis = ["OneDrive", "Documentos", "Documents"]
 
     # Procurar pelo primeiro diretório existente
     config_dir = None
 
     for dir_nome in dir_possiveis:
+
         dir_path = os.path.join(os.path.expanduser("~"), dir_nome)
+
+        if dir_nome == "OneDrive":
+            dir_path_temp = os.path.join(os.path.expanduser("~"), dir_nome, "Documentos")
+
+            if os.path.exists(dir_path):
+                dir_path = dir_path_temp
 
         if os.path.exists(dir_path):
             config_path = os.path.join(dir_path, "Monitoramento - Velocinet")
 
             if not os.path.exists(config_path):
                 os.makedirs(config_path)
+
             return config_path
 
     if config_dir is None:

@@ -6,7 +6,7 @@ import tkinter
 import customtkinter
 from PIL import Image
 
-from functions.functions import add_to_startup_windows, get_path_documents
+from functions.functions import add_to_startup_windows, get_path_documents, remove_to_startup_windows
 from monitoramento.monitoramento import executar_indefinidamente
 from screens.rodape import Rodape
 
@@ -109,7 +109,6 @@ class TelaInicial(customtkinter.CTk):
         config = self.get_config_user()
 
         if config == {}:
-            print("ue")
             return
 
         if config["inicio_automatico"] == True:
@@ -125,8 +124,10 @@ class TelaInicial(customtkinter.CTk):
 
         if self.get_visibilidade_entry() == True:
             self.change_config_user("inicio_automatico", True)
+            add_to_startup_windows(os.path.join(os.getcwd(), "dist", "monitoramento", "monitoramento.exe"))
         else:
             self.change_config_user("inicio_automatico", False)
+            remove_to_startup_windows()
 
         self.change_config_user("tempo_monitoramento", self.get_time_monitoramento_entry())
 

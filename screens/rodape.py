@@ -4,7 +4,7 @@ import platform
 import customtkinter
 import psutil
 
-from functions.functions import add_to_startup_windows, remove_to_startup_windows
+from functions.functions import add_to_startup_windows
 from monitoramento.monitoramento import executar_indefinidamente
 
 
@@ -61,7 +61,7 @@ class Rodape(customtkinter.CTk):
 
             if self.root.get_config_user()["inicio_automatico"] == True:
                 add_to_startup_windows(os.path.join(os.getcwd(), "dist", "monitoramento", "monitoramento.exe"))
-
+                executar_indefinidamente()
             else:
                 executar_indefinidamente()
 
@@ -71,7 +71,7 @@ class Rodape(customtkinter.CTk):
 
     def frame_inicializacao_posterior(self): # quando houver um processo, significa que o usuário já iniciou a execução do monitoramento, então troca o botão
         self.descricao.configure(text="Você pode cancelar o monitoramento clicando no botão abaixo")
-        self.botao_inicio.configure(text="Cancelar", hover_color="red4", fg_color="red", command=remove_to_startup_windows)
+        self.botao_inicio.configure(text="Cancelar", hover_color="red4", fg_color="red", command=self.kill_process_monitoramento)
     
     def frame_inicializacao_default(self):
         self.descricao.configure(text="Clique em Início para começar a monitorar seu provedor!")
@@ -93,3 +93,13 @@ class Rodape(customtkinter.CTk):
     def update_verifica_processo(self):
         self.verifica_processo()
         self.after(1000, self.update_verifica_processo)
+
+    def kill_process_monitoramento(self):
+
+        for process in psutil.process_iter(attrs=['name']):
+
+            if 'monitoramento' in process.info['name'].lower():
+                process.terminate()
+                return True
+        else:
+            return False
