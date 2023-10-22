@@ -19,12 +19,8 @@
 <details>
   <summary>Conteúdo</summary>
   <ol>
-    <li>
-      <a href="#sobre">Sobre o Projeto</a>
-      <ul>
-        <li><a href="#built">Instalando a aplicação</a></li>
-      </ul>
-    </li>
+    <li><a href="#sobre">Sobre o Projeto</a></li>
+    <li><a href="#built">Instalando a aplicação</a></li>
     <li>
       <a href="#comeco">Começando</a>
       <ul>
@@ -47,7 +43,7 @@ Este projeto tem como objetivo fornecer uma solução profissional para o monito
 
 <p align="right">(<a href="#readme-top">Topo</a>)</p>
 
-### <span id="built">Instalando a aplicação</span>
+## <span id="built">Instalando a aplicação</span>
 
 Antes de começarmos, é importante que você tenha feito o download da última versão do software, garantindo assim sua compatibilidade e correções juntamente com os utilitários que serão adicionados a medida que o software avança.
 
